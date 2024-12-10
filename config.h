@@ -32,7 +32,7 @@ static const bool inverted_colors = true;
 /*0) Outer border size. If you put this negative it will be a square.
  *1) Full borderwidth    2) Magnet border size
  *3) Resize border size  */
-static const uint8_t borders[] = {3,5,5,4};
+static const uint8_t borders[] = {0,0,0,0};
 /* Windows that won't have a border.
  * It uses substring comparison with what is found in the WM_NAME
  * attribute of the window. You can test this using `xprop WM_NAME`
@@ -40,8 +40,16 @@ static const uint8_t borders[] = {3,5,5,4};
 #define LOOK_INTO "WM_NAME"
 static const char *ignore_names[] = {"bar", "xclock"};
 ///--Menus and Programs---///
-static const char *menucmd[]   = { "", NULL };
-///--Custom foo---///
+static const char *menucmd[]   = { "rofi", "-show", "run", NULL };
+static const char *termcmd[]   = { "xterm", NULL };
+static const char *screens[]   = { "flameshot", "gui", NULL };
+
+//volume
+static const char *volume_up[]   = { "pactl", "set-sink-volume", "@DEFAULT_SINK@", "+5%", NULL };
+static const char *volume_down[]   = { "pactl", "set-sink-volume", "@DEFAULT_SINK@", "-5", NULL };
+static const char *volume_mute[]   = { "pactl", "set-sink-mute", "@DEFAULT_SINK@", "toggle", NULL };
+
+///--custom foo---///
 static void halfandcentered(const Arg *arg)
 {
 	Arg arg2 = {.i=TWOBWM_MAXHALF_VERTICAL_LEFT};
@@ -193,7 +201,13 @@ static key keys[] = {
     {  MOD |SHIFT,        XK_Right,      cursor_move,       {.i=TWOBWM_CURSOR_RIGHT}},
     {  MOD |SHIFT,        XK_Left,       cursor_move,       {.i=TWOBWM_CURSOR_LEFT}},
     // Start programs
-    {  MOD ,              XK_w,          start,             {.com = menucmd}},
+    {  MOD |CONTROL,      XK_Return,     start,             {.com = menucmd}},
+	{  0 ,		          0xff61,	     start,		        {.com = screens }}, 
+	{  MOD ,              XK_Return,     start,             {.com = termcmd}},
+	//volume control
+	{  0 ,		          0x1008ff13,	 start,		        {.com = volume_up }}, 
+	{  0 ,		          0x1008ff11,	 start,		        {.com = volume_down }}, 
+	{  0 ,		          0x1008ff12,	 start,		        {.com = volume_mute }},
     // Exit or restart 2bwm
     {  MOD |CONTROL,      XK_q,          twobwm_exit,       {.i=0}},
     {  MOD |CONTROL,      XK_r,          twobwm_restart,    {.i=0}},
